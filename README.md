@@ -30,7 +30,7 @@ cp tmp.env .env
 ## 2. Configure bot
 - Create your bot on Discord and add the token to `DISCORD_TOKEN` in `.env`
   - See: https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot
-- Add `CLIENT_ID` in [Portal](https://discord.com/developers/applications) > "General Information" > application id
+- Add `APPLICATION_ID` in [Portal](https://discord.com/developers/applications) > "General Information" > application id
 - Add `SERVER_ID`
   - From the app - https://support.discord.com/hc/en-us/articles/206346498
   - From the browser - it's the first set of numbers after `/channels/`. In this example `https://discord.com/channels/1234567890/xxxxxxx` the ID would be `1234567890`
