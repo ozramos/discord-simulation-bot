@@ -21,10 +21,10 @@ module.exports = {
 		}
 
     // Delete and re-require the command file
-    delete require.cache[require.resolve(`../${commandPath}.js`)];
+    delete require.cache[require.resolve(`./${commandPath}.js`)];
     try {
       interaction.client.commands.delete(command.data.name);
-      const newCommand = require(`../${commandPath}.js`);
+      const newCommand = require(`./${commandPath}.js`);
       interaction.client.commands.set(newCommand.data.name, newCommand);
       await interaction.reply(`Command \`${newCommand.data.name}\` was reloaded!`);
     } catch (error) {

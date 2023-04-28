@@ -1,8 +1,8 @@
 require('dotenv').config()
-const {openai} = require('../../openai')
+const {openai} = require('../openai')
 const {SlashCommandBuilder, EmbedBuilder, Client, Events, GatewayIntentBits} = require('discord.js')
 const {MessageType} = require('discord-api-types/v10')
-const client = require('../../client.js')
+const client = require('../client.js')
 
 /**
  * Handle replies to /chat embeds
