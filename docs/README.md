@@ -1,1 +1,3 @@
 # Discord NPC Bot
+
+<WidgetBot />
