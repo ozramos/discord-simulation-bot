@@ -1,5 +1,5 @@
 {
-  "name": "discord-npc-bot",
+  "name": "discord-simulation-bot",
   "version": "0.0.1",
   "description": "A GPT powered and customizable agent for Discord",
   "main": "src/index.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/0xozram/discord-npc-bot.git"
+    "url": "git+https://github.com/0xozram/discord-simulation-bot.git"
   },
   "keywords": [
     "discord",
@@ -23,9 +23,9 @@
   "author": "Oz <0xozram@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/0xozram/discord-npc-bot/issues"
+    "url": "https://github.com/0xozram/discord-simulation-bot/issues"
   },
-  "homepage": "https://github.com/0xozram/discord-npc-bot#readme",
+  "homepage": "https://github.com/0xozram/discord-simulation-bot#readme",
   "dependencies": {
     "discord-api-types": "^0.37.40",
     "discord.js": "^14.9.0",

@@ -12,7 +12,7 @@ export default {
       server="${SERVER_ID}"
       channel="${DEFAULT_CHANNEL_ID}"
       width="100%"
-      height="600"
+      height="450"
     ></widgetbot>`
 
     const script = document.createElement('script')

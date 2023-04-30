@@ -19,8 +19,8 @@
 ## 1. Install dependencies
 ```bash
 # Clone repo locally
-git clone https://github.com/0xozram/discord-npc-bot
-cd discord-npc-bot
+git clone https://github.com/0xozram/discord-simulation-bot
+cd discord-simulation-bot
 
 # Install dependencies
 npm i
