@@ -7,10 +7,10 @@ export default {
   name: 'WidgetBot',
 
   mounted () {
- // inject the following code into a ref
- this.$refs.widget.innerHTML = `<widgetbot
-      server="1100098329255366767"
-      channel="1100298883931844648"
+    // inject the following code into a ref
+    this.$refs.widget.innerHTML = `<widgetbot
+      server="${SERVER_ID}"
+      channel="${DEFAULT_CHANNEL_ID}"
       width="100%"
       height="600"
     ></widgetbot>`
