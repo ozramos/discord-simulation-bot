@@ -21,7 +21,7 @@ client.on(Events.MessageCreate, async message => {
 
       // reply to the original poster with a mention
       if (message.author.username + '#' + message.author.discriminator !== origPosterName && message.author.id !== client.user.id) {
-        await message.channel.send(`<@${message.author.id}>`)
+        await message.channel.send(Memory.push({role: 'assistant', content: `<@${message.author.id}>`}))
       }
     }
 
@@ -33,32 +33,20 @@ client.on(Events.MessageCreate, async message => {
      * 4. Reply to the user with the bot's response
      */
     if (repliedMessage.author.id === client.user.id && message.author.id !== client.user.id) {
-      // Get the user's memory
-      let messages = []
-      if (Memory.store[repliedMessage.author.name]) {
-        messages = Memory.store[repliedMessage.author.name]
-      }
-      
       // Add the user's message to their memory
-      messages.push({role: 'user', content: message.content})
-      Memory.store[repliedMessage.author.name] = messages
+      Memory.push({role: 'user', content: message.content})
 
       // Generate a response
       const completion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        messages
+        // @todo @fixme Use getter
+        messages: Memory.store.$
       })
 
-      // Add the bot's response to the user's memory
-      Memory.store[repliedMessage.author.name].push({
-        role: 'assistant', content:
-        completion.data.choices[0].message.content
-      })
-
-      // Reply to the user with the bot's response
-      const response = {content: completion.data.choices[0].message.content}
-      Memory.store[repliedMessage.author.name].push(response)
-      await message.reply(response)
+      // Store bots reply and send it to the user
+      await message.reply(Memory.push({
+        role: 'assistant', content: completion.data.choices[0].message.content
+      }))
     }
   }
 })
@@ -70,19 +58,13 @@ client.on(Events.MessageCreate, async message => {
  * Handle slash command
  */
 async function execute (message) {
-  // Get the user's memory
-  let messages = []
-  if (Memory.store[message.user.id]) {
-    messages = Memory.store[message.user.id]
-  }
-  
+  // Store the users reply and start prompt
+  Memory.push({role: 'user', content: message.options.getString('prompt', true)})
   await message.deferReply()
-  messages.push({role: 'user', content: message.options.getString('prompt', true)})
-  Memory.store[message.user.id] = messages
-
   const completion = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
-    messages
+    // @todo @fixme Use getter
+    messages: Memory.store.$
   })
 
   try {
@@ -94,18 +76,7 @@ async function execute (message) {
       .setDescription(message.options.getString('prompt', true))
       
     await message.editReply({embeds: [embed]})
-    await message.followUp({content: completion.data.choices[0].message.content})
-
-    // Add to memory
-    if (Memory.store[message.user.id]) {
-      Memory.store[message.user.id].push({role: 'user', content: message.options.getString('prompt', true)})
-      Memory.store[message.user.id].push({role: 'assistant', content: completion.data.choices[0].message.content})
-    } else {
-      Memory.store[message.user.id] = [
-        {role: 'user', content: message.options.getString('prompt', true)},
-        {role: 'assistant', content: completion.data.choices[0].message.content}
-      ]
-    }
+    await message.followUp(Memory.push({role: 'assistant', content: completion.data.choices[0].message.content}))
   } catch (e) {
     console.error(e)
     await message.editReply('Something went wrong!')
