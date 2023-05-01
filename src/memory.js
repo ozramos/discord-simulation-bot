@@ -24,6 +24,13 @@ module.exports = {
   },
 
   /**
+   * Gets the memory at a given path
+   */
+  get (path = '$') {
+    return get(store, path, [])
+  },
+
+  /**
    * Clears all memory
    */
   clear () {
