@@ -9,17 +9,14 @@ const Memory = require('../memory.js')
  * Handle slash commanda
  */
 async function execute (message) {
-  // Update the memory
-  const messages = Memory.get()
+  // Clear and update the memory
+  Memory.clear()
+  Memory.push({role: 'user', content: `The following contains your core memory for this prompt session:\n\n` + message.options.getString('prompt', true)})
 
   // show the user's memory
-  await message.reply({content: 'Update Memory:',
-    embeds: [
-      new EmbedBuilder()
-        .setTitle('Memory')
-        .setDescription(messages.map(m => `${m?.role}: ${m?.content}`).join('\n'))
-    ]
-  })
+  await message.reply({content: 'Memory updated'})
+  // Trigger the /memory command
+  // await client.commands.get('memory').execute(message)
 }
 
 module.exports = {
@@ -28,7 +25,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('memoryupdate')
     .setDescription('Update the bots memory')
-    .addStringOption(option => option.setName('memory')
+    .addStringOption(option => option.setName('prompt')
       .setDescription('The full memory to update the bot with')
       .setRequired(true))
 }
