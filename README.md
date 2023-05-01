@@ -2,7 +2,6 @@
 
 ![ezgif com-video-to-gif](https://user-images.githubusercontent.com/131492189/235380571-ca9e6ab0-18e5-4df0-b732-cefde0c4c9f5.gif)
 
-
 <br>
 <br>
 <br>
