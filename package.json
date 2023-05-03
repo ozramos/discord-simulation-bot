@@ -1,0 +1,33 @@
+{
+  "name": "discord-npc-bot",
+  "version": "0.0.1",
+  "description": "A GPT powered and customizable agent for Discord",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "deploy": "node src/deploy.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xozram/discord-npc-bot.git"
+  },
+  "keywords": [
+    "discord",
+    "ai",
+    "gpt",
+    "bot",
+    "nocode"
+  ],
+  "author": "Oz <0xozram@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/0xozram/discord-npc-bot/issues"
+  },
+  "homepage": "https://github.com/0xozram/discord-npc-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.9.0",
+    "dotenv": "^16.0.3",
+    "openai": "^3.2.1"
+  }
+}
