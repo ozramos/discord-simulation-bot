@@ -6,18 +6,18 @@ const client = require('../client.js')
 const Memory = require('../memory.js')
 
 /**
- * Handle slash command
+ * Handle slash commanda
  */
 async function execute (message) {
-  // Get memory
+  // Update the memory
   const messages = Memory.get()
 
   // show the user's memory
-  await message.reply({content: 'Simulation Memory:',
+  await message.reply({content: 'Update Memory:',
     embeds: [
       new EmbedBuilder()
         .setTitle('Memory')
-        .setDescription(messages.length ? messages.map(m => `${m?.role}: ${m?.content}`).join('\n') : 'No memory yet')
+        .setDescription(messages.map(m => `${m?.role}: ${m?.content}`).join('\n'))
     ]
   })
 }
@@ -26,6 +26,9 @@ module.exports = {
   execute,
   cooldown: 0.5,
   data: new SlashCommandBuilder()
-    .setName('memory')
-    .setDescription('Interactively tinker with the bots memory'),
+    .setName('memoryupdate')
+    .setDescription('Update the bots memory')
+    .addStringOption(option => option.setName('memory')
+      .setDescription('The full memory to update the bot with')
+      .setRequired(true))
 }
