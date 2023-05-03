@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/0xozram/discord-npc-bot#readme",
   "dependencies": {
+    "discord-api-types": "^0.37.40",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
     "openai": "^3.2.1"

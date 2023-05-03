@@ -1,10 +1,33 @@
 require('dotenv').config()
 const {openai} = require('../../openai')
-const {SlashCommandBuilder, EmbedBuilder} = require('discord.js')
+const {SlashCommandBuilder, EmbedBuilder, Client, Events, GatewayIntentBits} = require('discord.js')
+const {MessageType} = require('discord-api-types/v10')
+const client = require('../../client.js')
 
+/**
+ * Handle replies to /chat embeds
+ */
+client.on(Events.MessageCreate, async message => {
+  if (message.type === MessageType.Reply) {
+    const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
+    // check if the replied message was sent by the bot
+    if (repliedMessage.embeds?.[0] && repliedMessage.author.bot && repliedMessage.author.id === client.user.id) {
+      // get the original poster's id from the embed
+      const origPosterName = repliedMessage.embeds[0].author.name
+
+      // reply to the original poster with a mention
+      if (message.author.username + '#' + message.author.discriminator !== origPosterName && message.author.id !== client.user.id) {
+        message.channel.send(`<@${message.author.id}>`)
+      }
+    }
+  }
+})
+
+/**
+ * Handle slash command
+*/
 // In the form {userID: [{role: 'user', content: 'message'}, ...]}
 const memory = {}
-
 module.exports = {
   cooldown: 1,
   
