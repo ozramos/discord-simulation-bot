@@ -11,14 +11,17 @@ const Memory = require('../memory.js')
 client.on(Events.MessageCreate, async message => {
   if (message.type === MessageType.Reply) {
     const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
-    // check if the replied message was sent by the bot
-    if (repliedMessage.embeds?.[0] && repliedMessage.author.bot && repliedMessage.author.id === client.user.id) {
+    
+    /**
+     * Bot replied to a bot embed, so let's tag the embed's original poster to remind them
+     */
+    if (repliedMessage.embeds?.[0] && repliedMessage.author.bot) {
       // get the original poster's id from the embed
       const origPosterName = repliedMessage.embeds[0].author.name
 
       // reply to the original poster with a mention
       if (message.author.username + '#' + message.author.discriminator !== origPosterName && message.author.id !== client.user.id) {
-        message.channel.send(`<@${message.author.id}>`)
+        await message.channel.send(`<@${message.author.id}>`)
       }
     }
 
@@ -29,7 +32,7 @@ client.on(Events.MessageCreate, async message => {
      * 3. Add the bot's response to their memory
      * 4. Reply to the user with the bot's response
      */
-    if (repliedMessage.author.id === client.user.id) {
+    if (repliedMessage.author.id === client.user.id && message.author.id !== client.user.id) {
       // Get the user's memory
       let messages = []
       if (Memory.store[repliedMessage.author.name]) {

@@ -1,5 +1,5 @@
 <template>
-  <div ref="widget"></div>
+  <div class="widget-bot-wrapper" ref="widget"></div>
 </template>
 
 <script>
@@ -12,7 +12,7 @@ export default {
       server="${SERVER_ID}"
       channel="${DEFAULT_CHANNEL_ID}"
       width="100%"
-      height="450"
+      height="500"
     ></widgetbot>`
 
     const script = document.createElement('script')
@@ -22,3 +22,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.widget-bot-wrapper {
+  margin: 1em auto;
+}
+</style>
