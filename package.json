@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "docs": "vuepress dev docs",
     "deploy": "node src/deploy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -30,5 +31,9 @@
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.3",
     "openai": "^3.2.1"
+  },
+  "devDependencies": {
+    "@vuepress/client": "^2.0.0-beta.61",
+    "vuepress": "^2.0.0-beta.61"
   }
 }
