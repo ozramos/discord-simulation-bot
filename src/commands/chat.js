@@ -17,7 +17,7 @@ client.on(Events.MessageCreate, async message => {
      */
     if (repliedMessage.embeds?.[0] && repliedMessage.author.bot) {
       // get the original poster's id from the embed
-      const origPosterName = repliedMessage.embeds[0].author.name
+      const origPosterName = repliedMessage.embeds[0].author?.name
 
       // reply to the original poster with a mention
       if (message.author.username + '#' + message.author.discriminator !== origPosterName && message.author.id !== client.user.id) {
@@ -50,16 +50,15 @@ client.on(Events.MessageCreate, async message => {
       })
 
       // Add the bot's response to the user's memory
-      if (Memory.store[repliedMessage.author.name]) {
-        Memory.store[repliedMessage.author.name].push({role: 'assistant', content: completion.data.choices[0].message.content})
-      } else {
-        Memory.store[repliedMessage.author.name] = [
-          {role: 'assistant', content: completion.data.choices[0].message.content}
-        ]
-      }
+      Memory.store[repliedMessage.author.name].push({
+        role: 'assistant', content:
+        completion.data.choices[0].message.content
+      })
 
       // Reply to the user with the bot's response
-      await message.reply({content: completion.data.choices[0].message.content})
+      const response = {content: completion.data.choices[0].message.content}
+      Memory.store[repliedMessage.author.name].push(response)
+      await message.reply(response)
     }
   }
 })
@@ -118,17 +117,12 @@ async function execute (message) {
  * Handle slash command
  */
 module.exports = {
+  execute,
   cooldown: 1,
-  
-  // Definition
   data: new SlashCommandBuilder()
     .setName('chat')
     .setDescription('Prompt the bot to get a text response')
 		.addStringOption(option => option.setName('prompt')
       .setDescription('The message to send to the bot.')
-      .setRequired(true)
-    ),
-  
-  // Execution
-  execute
+      .setRequired(true)),
 }
