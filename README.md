@@ -34,6 +34,7 @@ cp tmp.env .env
 - Add `SERVER_ID`
   - From the app - https://support.discord.com/hc/en-us/articles/206346498
   - From the browser - it's the first set of numbers after `/channels/`. In this example `https://discord.com/channels/1234567890/xxxxxxx` the ID would be `1234567890`
+- (Optional) Add `DEFAULT_CHANNEL_ID`, this will be used for the vuepress docs
 
 
 ## 3. Run the bot and GUI
@@ -41,7 +42,7 @@ cp tmp.env .env
 # Start bot
 npm start
 
-# Start docs/GUI
+# Start docs/GUI powered by https://widgetbot.io/
 npm run docs
 ```
 
