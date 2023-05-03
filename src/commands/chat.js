@@ -7,8 +7,10 @@ const Memory = require('../memory.js')
 
 /**
  * Handle replies to /chat embeds
- */
+*/
 client.on(Events.MessageCreate, async message => {
+  let hasReplied = false
+
   if (message.type === MessageType.Reply) {
     const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
     
@@ -21,44 +23,58 @@ client.on(Events.MessageCreate, async message => {
 
       // reply to the original poster with a mention
       if (message.author.username + '#' + message.author.discriminator !== origPosterName && message.author.id !== client.user.id) {
-        await message.channel.send(`<@${message.author.id}>`)
+        await message.channel.send(Memory.push({role: 'assistant', content: `<@${message.author.id}>`}))
       }
     }
 
     /**
-     * User replied to the bot, so we need to:
+     * User replied to or @mentioned the bot, so we need to:
      * 1. Get the user's memory
      * 2. Add the user's message to their memory
      * 3. Add the bot's response to their memory
      * 4. Reply to the user with the bot's response
      */
-    if (repliedMessage.author.id === client.user.id && message.author.id !== client.user.id) {
-      // Get the user's memory
-      let messages = []
-      if (Memory.store[repliedMessage.author.name]) {
-        messages = Memory.store[repliedMessage.author.name]
-      }
-      
+    if (message.mentions.has(client.user.id) || (repliedMessage.author.id === client.user.id && message.author.id !== client.user.id)) {
       // Add the user's message to their memory
-      messages.push({role: 'user', content: message.content})
-      Memory.store[repliedMessage.author.name] = messages
+      Memory.push({role: 'user', content: message.content})
 
       // Generate a response
       const completion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        messages
+        messages: Memory.get()
       })
 
-      // Add the bot's response to the user's memory
-      Memory.store[repliedMessage.author.name].push({
-        role: 'assistant', content:
-        completion.data.choices[0].message.content
-      })
+      // Store bots reply and send it to the user
+      await message.reply(Memory.push({
+        role: 'assistant', content: completion.data.choices[0].message.content
+      }))
+      hasReplied = true
+    }
+  }
 
-      // Reply to the user with the bot's response
-      const response = {content: completion.data.choices[0].message.content}
-      Memory.store[repliedMessage.author.name].push(response)
-      await message.reply(response)
+  /**
+   * Check for @mentions
+   */
+  if (message.mentions.has(client.user.id)) {
+    // Add the user's message to their memory
+    Memory.push({role: 'user', content: message.content})
+    // Get the users memory
+    const messages = Memory.get()
+
+    // Generate a response
+    if (messages.length) {
+      const completion = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: Memory.get()
+      })
+  
+      // Store bots reply and send it to the user
+      await message.reply(Memory.push({
+        role: 'assistant', content: completion.data.choices[0].message.content
+      }))
+      hasReplied = true
+    } else {
+      await message.reply('I don\'t know what to say yet!')
     }
   }
 })
@@ -70,19 +86,12 @@ client.on(Events.MessageCreate, async message => {
  * Handle slash command
  */
 async function execute (message) {
-  // Get the user's memory
-  let messages = []
-  if (Memory.store[message.user.id]) {
-    messages = Memory.store[message.user.id]
-  }
-  
+  // Store the users reply and start prompt
+  Memory.push({role: 'user', content: message.options.getString('prompt', true)})
   await message.deferReply()
-  messages.push({role: 'user', content: message.options.getString('prompt', true)})
-  Memory.store[message.user.id] = messages
-
   const completion = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
-    messages
+    messages: Memory.get()
   })
 
   try {
@@ -94,18 +103,7 @@ async function execute (message) {
       .setDescription(message.options.getString('prompt', true))
       
     await message.editReply({embeds: [embed]})
-    await message.followUp({content: completion.data.choices[0].message.content})
-
-    // Add to memory
-    if (Memory.store[message.user.id]) {
-      Memory.store[message.user.id].push({role: 'user', content: message.options.getString('prompt', true)})
-      Memory.store[message.user.id].push({role: 'assistant', content: completion.data.choices[0].message.content})
-    } else {
-      Memory.store[message.user.id] = [
-        {role: 'user', content: message.options.getString('prompt', true)},
-        {role: 'assistant', content: completion.data.choices[0].message.content}
-      ]
-    }
+    await message.followUp(Memory.push({role: 'assistant', content: completion.data.choices[0].message.content}))
   } catch (e) {
     console.error(e)
     await message.editReply('Something went wrong!')

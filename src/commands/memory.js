@@ -9,18 +9,14 @@ const Memory = require('../memory.js')
  * Handle slash command
  */
 async function execute (message) {
-  // Get the user's memory
-  let messages = []
-  if (Memory.store[message.user.id]) {
-    messages = Memory.store[message.user.id]
-  }
+  // Get memory
+  const messages = Memory.get()
 
   // show the user's memory
-  await message.reply({content: 'Simulation Memory:',
-    embeds: [
+  await message.reply({embeds: [
       new EmbedBuilder()
         .setTitle('Memory')
-        .setDescription(messages.map(m => `${m?.role}: ${m?.content}`).join('\n'))
+        .setDescription(messages.length ? messages.map(m => `${m?.role}: ${m?.content}`).join('\n') : 'No memory yet')
     ]
   })
 }
