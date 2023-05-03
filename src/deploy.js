@@ -34,7 +34,7 @@ for (const folder of commandFolders) {
 
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
-			Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.SERVER_ID),
+			Routes.applicationGuildCommands(process.env.APPLICATION_ID, process.env.SERVER_ID),
 			{ body: commands },
 		)
 
