@@ -55,7 +55,12 @@ export default {
   
   // Environment variables
   define: {
-    ...process.env,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    DISCORD_TOKEN: process.env.DISCORD_TOKEN,
+    APPLICATION_ID: process.env.APPLICATION_ID,
+    SERVER_ID: process.env.SERVER_ID,
+    DEFAULT_CHANNEL_ID: process.env.DEFAULT_CHANNEL_ID,
+    NODE_VERSION: process.env.NODE_VERSION,
   },
 
   plugins: [
