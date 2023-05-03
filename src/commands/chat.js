@@ -7,8 +7,10 @@ const Memory = require('../memory.js')
 
 /**
  * Handle replies to /chat embeds
- */
+*/
 client.on(Events.MessageCreate, async message => {
+  let hasReplied = false
+
   if (message.type === MessageType.Reply) {
     const repliedMessage = await message.channel.messages.fetch(message.reference.messageId);
     
@@ -26,27 +28,53 @@ client.on(Events.MessageCreate, async message => {
     }
 
     /**
-     * User replied to the bot, so we need to:
+     * User replied to or @mentioned the bot, so we need to:
      * 1. Get the user's memory
      * 2. Add the user's message to their memory
      * 3. Add the bot's response to their memory
      * 4. Reply to the user with the bot's response
      */
-    if (repliedMessage.author.id === client.user.id && message.author.id !== client.user.id) {
+    if (message.mentions.has(client.user.id) || (repliedMessage.author.id === client.user.id && message.author.id !== client.user.id)) {
       // Add the user's message to their memory
       Memory.push({role: 'user', content: message.content})
 
       // Generate a response
       const completion = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
-        // @todo @fixme Use getter
-        messages: Memory.store.$
+        messages: Memory.get()
       })
 
       // Store bots reply and send it to the user
       await message.reply(Memory.push({
         role: 'assistant', content: completion.data.choices[0].message.content
       }))
+      hasReplied = true
+    }
+  }
+
+  /**
+   * Check for @mentions
+   */
+  if (message.mentions.has(client.user.id)) {
+    // Add the user's message to their memory
+    Memory.push({role: 'user', content: message.content})
+    // Get the users memory
+    const messages = Memory.get()
+
+    // Generate a response
+    if (messages.length) {
+      const completion = await openai.createChatCompletion({
+        model: 'gpt-3.5-turbo',
+        messages: Memory.get()
+      })
+  
+      // Store bots reply and send it to the user
+      await message.reply(Memory.push({
+        role: 'assistant', content: completion.data.choices[0].message.content
+      }))
+      hasReplied = true
+    } else {
+      await message.reply('I don\'t know what to say yet!')
     }
   }
 })
@@ -63,8 +91,7 @@ async function execute (message) {
   await message.deferReply()
   const completion = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',
-    // @todo @fixme Use getter
-    messages: Memory.store.$
+    messages: Memory.get()
   })
 
   try {

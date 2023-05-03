@@ -13,8 +13,7 @@ async function execute (message) {
   const messages = Memory.get()
 
   // show the user's memory
-  await message.reply({content: 'Simulation Memory:',
-    embeds: [
+  await message.reply({embeds: [
       new EmbedBuilder()
         .setTitle('Memory')
         .setDescription(messages.length ? messages.map(m => `${m?.role}: ${m?.content}`).join('\n') : 'No memory yet')
