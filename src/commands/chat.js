@@ -3,6 +3,7 @@ const {openai} = require('../openai')
 const {SlashCommandBuilder, EmbedBuilder, Client, Events, GatewayIntentBits} = require('discord.js')
 const {MessageType} = require('discord-api-types/v10')
 const client = require('../client.js')
+const Memory = require('../memory.js')
 
 /**
  * Handle replies to /chat embeds
@@ -25,9 +26,7 @@ client.on(Events.MessageCreate, async message => {
 
 /**
  * Handle slash command
-*/
-// In the form {userID: [{role: 'user', content: 'message'}, ...]}
-const memory = {}
+ */
 module.exports = {
   cooldown: 1,
   
@@ -44,13 +43,13 @@ module.exports = {
   async execute(interaction) {
     // Get the user's memory
     let messages = []
-    if (memory[interaction.user.id]) {
-      messages = memory[interaction.user.id]
+    if (Memory.store[interaction.user.id]) {
+      messages = Memory.store[interaction.user.id]
     }
     
     await interaction.deferReply()
     messages.push({role: 'user', content: interaction.options.getString('prompt', true)})
-    memory[interaction.user.id] = messages
+    Memory.store[interaction.user.id] = messages
 
     const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
@@ -69,11 +68,11 @@ module.exports = {
       await interaction.followUp({content: completion.data.choices[0].message.content})
 
       // Add to memory
-      if (memory[interaction.user.id]) {
-        memory[interaction.user.id].push({role: 'user', content: interaction.options.getString('prompt', true)})
-        memory[interaction.user.id].push({role: 'assistant', content: completion.data.choices[0].message.content})
+      if (Memory.store[interaction.user.id]) {
+        Memory.store[interaction.user.id].push({role: 'user', content: interaction.options.getString('prompt', true)})
+        Memory.store[interaction.user.id].push({role: 'assistant', content: completion.data.choices[0].message.content})
       } else {
-        memory[interaction.user.id] = [
+        Memory.store[interaction.user.id] = [
           {role: 'user', content: interaction.options.getString('prompt', true)},
           {role: 'assistant', content: completion.data.choices[0].message.content}
         ]
