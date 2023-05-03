@@ -1,6 +1,6 @@
 require('dotenv').config()
 const {openai} = require('../../openai')
-const {SlashCommandBuilder} = require('discord.js')
+const {SlashCommandBuilder, EmbedBuilder} = require('discord.js')
 
 // In the form {userID: [{role: 'user', content: 'message'}, ...]}
 const memory = {}
@@ -35,7 +35,15 @@ module.exports = {
     })
 
     try {
-      await interaction.editReply(completion.data.choices[0].message.content)
+      // Show an embed, with the users avatar and original prompt
+      // Uses the description field to display the bot's response
+      // Uses the footer field to show the time taken to generate the response
+      const embed = new EmbedBuilder()
+        .setAuthor({name: `${interaction.user.username}#${interaction.user.discriminator}`, iconURL: interaction.user.displayAvatarURL()})
+        .setDescription(interaction.options.getString('prompt', true))
+        
+      await interaction.editReply({embeds: [embed]})
+      await interaction.followUp({content: completion.data.choices[0].message.content})
 
       // Add to memory
       if (memory[interaction.user.id]) {
