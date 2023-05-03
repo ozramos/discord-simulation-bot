@@ -20,12 +20,37 @@ export default {
     // Config
     colorMode: 'dark',
     navbar: [
+      // {
+      //   text: 'Home',
+      //   link: '/',
+      // },
+    ],
+    sidebar: [
       {
-        text: 'Home',
+        text: 'Intro',
         link: '/',
       },
-    ],
-
+      {
+        text: 'Theory',
+        link: '',
+      },
+      {
+        text: 'Prompts',
+        link: '',
+      },
+      {
+        text: 'Roadmap',
+        link: ''
+      },
+      {
+        text: 'Sponsor',
+        link: ''
+      },
+      {
+        text: '0xozram',
+        link: ''
+      },
+    ]
   }),
   
   // Environment variables

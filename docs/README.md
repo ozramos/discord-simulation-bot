@@ -1,4 +1,4 @@
-# Simulate anything...like entire communities of agents
+# A multi-personality bot that can simulate entire communities of Artificial Intelligences
 
 > **Get the source:** [https://github.com/0xozram/discord-simulation-bot](https://github.com/0xozram/discord-simulation-bot)
 > <div style="margin: 1em 0"></div> 
