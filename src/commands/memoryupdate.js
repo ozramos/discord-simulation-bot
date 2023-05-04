@@ -1,8 +1,5 @@
 require('dotenv').config()
-const {openai} = require('../openai')
-const {SlashCommandBuilder, EmbedBuilder, Client, Events, GatewayIntentBits} = require('discord.js')
-const {MessageType} = require('discord-api-types/v10')
-const client = require('../client.js')
+const {SlashCommandBuilder} = require('discord.js')
 const Memory = require('../memory.js')
 
 /**
@@ -15,8 +12,6 @@ async function execute (message) {
 
   // show the user's memory
   await message.reply({content: 'Memory updated'})
-  // Trigger the /memory command
-  // await client.commands.get('memory').execute(message)
 }
 
 module.exports = {

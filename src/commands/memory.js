@@ -1,8 +1,5 @@
 require('dotenv').config()
-const {openai} = require('../openai')
-const {SlashCommandBuilder, EmbedBuilder, Client, Events, GatewayIntentBits} = require('discord.js')
-const {MessageType} = require('discord-api-types/v10')
-const client = require('../client.js')
+const {SlashCommandBuilder, EmbedBuilder} = require('discord.js')
 const Memory = require('../memory.js')
 
 /**
